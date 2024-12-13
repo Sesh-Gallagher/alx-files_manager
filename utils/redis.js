@@ -1,21 +1,14 @@
-const redis = require('redis');
-import { promisify } from 'util';
 import { createClient } from 'redis';
+import { promisify } from 'util';
 
-
-class RedisClient {
- 
-   * Creates a new RedisClient instance.
+/**
+* Creates a new RedisClient instance.
    */
+class RedisClient {
   constructor() {
     this.client = createClient();
-    this.isClientConnected = true;
-    this.client.on('error', (err) => {
-      console.error('Redis client failed to connect:', err.message || err.toString());
-      this.isClientConnected = false;
-    });
-    this.client.on('connect', () => {
-      this.isClientConnected = true;
+    this.client.on('error', (error) => {
+      console.log(`Redis client not connected to server: ${error}`);
     });
   }
 
@@ -23,32 +16,39 @@ class RedisClient {
    * Checks if this client's connection to the Redis server is active.
    */
   isAlive() {
-    return this.isClientConnected;
+    if (this.client.connected) {
+      return true;
+    }
+    return false;
   }
 
-  /**
+   /**
    * Retrieves the value of a given key.
    */
   async get(key) {
-    return promisify(this.client.GET).bind(this.client)(key);
+    const redisGet = promisify(this.client.get).bind(this.client);
+    const value = await redisGet(key);
+    return value;
   }
 
-  /**
+   /**
    * Stores a key and its value along with an expiration time.
    */
-  async set(key, value, duration) {
-    await promisify(this.client.SETEX)
-      .bind(this.client)(key, duration, value);
+  async set(key, value, time) {
+    const redisSet = promisify(this.client.set).bind(this.client);
+    await redisSet(key, value);
+    await this.client.expire(key, time);
   }
 
-  /**
+   /**
    * Removes the value of a given key.
    */
   async del(key) {
-    await promisify(this.client.DEL).bind(this.client)(key);
+    const redisDel = promisify(this.client.del).bind(this.client);
+    await redisDel(key);
   }
 }
 
 const redisClient = new RedisClient();
 
-export default redisClient;
+module.exports = redisClient;
