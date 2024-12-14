@@ -8,11 +8,7 @@ class AppController {
    * { "redis": true, "db": true } status code 200
    */
   static getStatus(request, response) {
-    const status = {
-      redis: redisClient.isAlive(),
-      db: dbClient.isAlive(),
-    };
-    response.status(200).send(status);
+    response.status(200).json({ redis: redisClient.isAlive(), db: dbClient.isAlive() });
   }
 
   /**
@@ -21,12 +17,10 @@ class AppController {
    * status code 200
    */
   static async getStats(request, response) {
-    const stats = {
-      users: await dbClient.nbUsers(),
-      files: await dbClient.nbFiles(),
-    };
-    response.status(200).send(stats);
+    const usersNu = await dbClient.nbUsers();
+    const filesNu= await dbClient.nbFiles();
+    response.status(200).json({ users: usersNu, files: filesNu });
   }
 }
 
-export default AppController;
+module.exports = AppController;
