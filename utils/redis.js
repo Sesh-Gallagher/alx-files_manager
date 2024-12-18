@@ -22,7 +22,7 @@ class RedisClient {
     return false;
   }
 
-   /**
+  /**
    * Retrieves the value of a given key.
    */
   async get(key) {
@@ -31,7 +31,7 @@ class RedisClient {
     return value;
   }
 
-   /**
+  /**
    * Stores a key and its value along with an expiration time.
    */
   async set(key, value, time) {
@@ -40,7 +40,7 @@ class RedisClient {
     await this.client.expire(key, time);
   }
 
-   /**
+  /**
    * Removes the value of a given key.
    */
   async del(key) {
