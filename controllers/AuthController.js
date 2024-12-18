@@ -1,7 +1,8 @@
+import sha1 from 'sha1';
+import { v4 as uuidv4 } from 'uuid';
 import redisClient from '../utils/redis';
 import userUtils from '../utils/user';
-import { v4 as uuidv4 } from 'uuid';
-import sha1 from 'sha1';
+
 
 class AuthController {
   /**
@@ -16,6 +17,8 @@ class AuthController {
    * the user ID for 24 hours
    * Return this token: { "token": "155342df-2399-41da-9e8c-458b6ac52a0c" }
    * with a status code 200
+   *
+   *
    */
   static async getConnect(request, response) {
     const Authorization = request.header('Authorization') || '';
