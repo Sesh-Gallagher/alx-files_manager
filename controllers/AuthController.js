@@ -3,7 +3,6 @@ import { v4 as uuidv4 } from 'uuid';
 import redisClient from '../utils/redis';
 import userUtils from '../utils/user';
 
-
 class AuthController {
   /**
    * Should sign-in the user by generating a new authentication token
